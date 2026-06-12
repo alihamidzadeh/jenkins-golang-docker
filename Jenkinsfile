@@ -18,7 +18,7 @@ pipeline {
             steps {
                 echo 'Running Golang Tests using a temporary Docker container...'
                 // ما رو جنکینز گو نداریم! پس یه کانتینر موقت میاریم بالا تا کدهامون رو تست کنه
-                sh 'docker run --rm -v "${PWD}":/usr/src/app -w /usr/src/app golang:1.21 go test -v'
+                sh 'docker run --rm -v "${PWD}":/usr/src/app -w /usr/src/app docker.arvancloud.ir/golang:1.21-alpine go test -v'
             }
         }
 
