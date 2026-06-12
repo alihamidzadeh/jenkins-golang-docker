@@ -2,6 +2,10 @@
 FROM docker.arvancloud.ir/golang:1.21-alpine AS builder
 WORKDIR /app
 COPY . .
+
+# اول کدهای نوشته شده رو تست میکنیم (تست CI). اگه फेल بشه داکر ایمیج رو نمیسازه!
+RUN go test -v
+
 # بیلد کردن پروژه گو به یک فایل اجرایی به اسم myapp
 RUN go build -o myapp main.go
 

@@ -1,7 +1,6 @@
 pipeline {
     agent any
     
-    // تعریف متغیرهای محیطی برای استفاده در طول پایپ‌لاین
     environment {
         APP_NAME = "golang-web-app"
     }
@@ -14,18 +13,10 @@ pipeline {
             }
         }
 
-        stage('Test (CI)') {
+        stage('Test & Build Docker Image (CI)') {
             steps {
-                echo 'Running Golang Tests using a temporary Docker container...'
-                // ما رو جنکینز گو نداریم! پس یه کانتینر موقت میاریم بالا تا کدهامون رو تست کنه
-                sh 'docker run --rm -v "${PWD}":/usr/src/app -w /usr/src/app docker.arvancloud.ir/golang:1.21-alpine go test -v'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                echo 'Building the Docker Image...'
-                // داکر ایمیج برنامه خودمون رو می‌سازیم و شماره بیلد جنکینز رو به عنوان تگ بهش میدیم
+                echo 'Building Image and Running Tests...'
+                // وقتی این دستور اجرا بشه، اول تست‌ها رو داخل کانتینر میگیره و بعد ایمیج میسازه
                 sh 'docker build -t ${APP_NAME}:${BUILD_NUMBER} .'
             }
         }
@@ -33,10 +24,7 @@ pipeline {
         stage('Deploy (CD)') {
             steps {
                 echo 'Deploying the container...'
-                // اول اگر کانتینر قبلی با این اسم وجود داره، پاکش میکنیم (|| true باعث میشه اگر نبود، ارور نده)
                 sh 'docker rm -f ${APP_NAME} || true'
-                
-                // کانتینر جدید رو اجرا میکنیم. (پورت 8081 سرور رو وصل میکنیم به 8080 کانتینر، چون 8080 دست خود جنکینزه!)
                 sh 'docker run -d -p 8081:8080 --name ${APP_NAME} ${APP_NAME}:${BUILD_NUMBER}'
             }
         }
