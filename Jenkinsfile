@@ -16,7 +16,6 @@ pipeline {
         stage('Test & Build Docker Image (CI)') {
             steps {
                 echo 'Building Image and Running Tests...'
-                // وقتی این دستور اجرا بشه، اول تست‌ها رو داخل کانتینر میگیره و بعد ایمیج میسازه
                 sh 'docker build -t ${APP_NAME}:${BUILD_NUMBER} .'
             }
         }
